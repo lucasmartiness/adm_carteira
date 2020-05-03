@@ -3,6 +3,8 @@ import Navbar from './navbar'
 import {AppBar,Toolbar,Typography , Container, makeStyles , Link , Box , Button, Grid , Breadcrumbs , Paper,Card,CardContent} from '@material-ui/core'
 import FormOperacao from './formOperacao'
 import firebase from './../../firebase'
+// import HomeIcon from '@material-ui/icons/Home';
+
 
 import {Link as RouterLink} from 'react-router-dom'
 
@@ -11,11 +13,9 @@ const operacoesRef = (carteira_id,ativo_id) =>
 
 const carteiraRef = () => firebase.firestore().collection("carteira")
 
-
 const ativoRef = (carteira , ativo) => firebase.firestore().collection("carteira/"+carteira+"/ativo/"+ ativo)
 
 const ativo_link = ( carteira_param ) => "/carteira/"+carteira_param+"/ativo"
-
 
 let styles = makeStyles((style)=>({
   carteiraContainer:{
@@ -30,7 +30,6 @@ let styles = makeStyles((style)=>({
     padding: "20px"
   }
 }))
-
 
 
 const AtivoSingular = (props ) => {
@@ -81,13 +80,18 @@ const AtivoSingular = (props ) => {
     operacoesRef( carteira_param , ativo_param ).add( operacao ) 
       .then( () => {
         console.log( operacao )
+        setOpenDialog(false)
       })
   }
   const handleDelete = ( id ) => {
     operacoesRef( carteira_param , ativo_param )
       .doc(id)
       .delete()
-      .then( () => alert( "Operação deletada!"))
+      .then( () => {
+        
+        alert( "Operação deletada!")
+        
+      })
   }
 
   let [openDialog, setOpenDialog] = useState(false)
@@ -105,26 +109,32 @@ const AtivoSingular = (props ) => {
     <Container  className={classes.container} >
         
         <Breadcrumbs>
-          
           <Link 
                 component={RouterLink}
-                to='/carteira'> Carteira 
+                to='/carteira'>
+                
+                Carteira 
           </Link>
           <Link 
                 component={RouterLink}
                 to={ativo_link( carteira_param )}> Ativos 
           </Link>
-
         </Breadcrumbs>
 
 
         <Card  className={ classes.carteiraContainer}>
           <Typography variant="h4" color="primary">
+            
             Ativo: {ativo.nome}
           </Typography>
           <Typography>
             {ativo.ehAtivoVariavel == 'true' ? 'renda variavel' : 'renda fixa' }
           </Typography>
+          <Typography>
+            {ativo.rotulo }
+          </Typography>
+
+
           <Button 
               variant="contained"
               color="primary"
@@ -143,7 +153,7 @@ const AtivoSingular = (props ) => {
             <Box key={operacao.id}>
               <CardContent>
                 qtd {operacao.qtd} | 
-                custo {operacao.custo} |
+                custo {operacao.valor} |
                 prazo {operacao.prazo} |
                 data {operacao.data} |
                 ação {operacao.tipoOperacao} |

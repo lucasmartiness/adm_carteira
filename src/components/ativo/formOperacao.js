@@ -16,7 +16,7 @@ const FormOperacao = (props) => {
   const handleClick = () => {
     let formData = {valor,data,qtd,tipoOperacao}
     
-    if( !props.EhAtivoVariavel )  formData = { ...formData, juros,prazo } 
+    if( props.EhAtivoVariavel == 'false')  formData = { ...formData, juros,prazo } 
 
    
     props.onSave( formData )

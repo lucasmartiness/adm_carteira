@@ -50,13 +50,16 @@ const AtivoComponent = ( props ) => {
     let unsubscribe = 
       ativoRef( props.match.params.carteira )
         .onSnapshot( (ativos) => {
-          console.log(ativos)
-          setAtivos( ativos.docs.map( ativo => ({ id:ativo.id, ...ativo.data() }) ) )
+           
+          
+          
+          setAtivos( ativos.docs.map( ativo => {
+            console.log( ativo )
+            return  { id:ativo.id, ...ativo.data() }
+          } ) )
+
         })
         
-        
-
-
       return () => { unsubscribe() ; }
   },[])
 
@@ -120,15 +123,17 @@ const AtivoComponent = ( props ) => {
             Seus Ativos
           </Typography>
 
-          <Grid container  spacing={2}>
+          <Grid 
+            container  >
           
              {ativos && ativos.map(
                 ativo => 
-                ( <Ativo base={"/carteira/"+ props.match.params.carteira +"/ativo/" + ativo.id}
-                         key={ativo.id} 
-                         title={ ativo.nome}
-                         id={ativo.id}  
-                         onDelete={ () => handleDelete( ativo.id )}
+                ( <Ativo
+                       base={"/carteira/"+ props.match.params.carteira +"/ativo/" + ativo.id}
+                        key={ativo.id} 
+                        title={ ativo.nome}
+                        id={ativo.id}  
+                        onDelete={ () => handleDelete( ativo.id )}
                   />)    
               )}
             
