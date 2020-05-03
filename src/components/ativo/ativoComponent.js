@@ -54,17 +54,47 @@ const AtivoComponent = ( props ) => {
           setAtivos( ativos.docs.map( ativo => ({ id:ativo.id, ...ativo.data() }) ) )
         })
         
-
+        
 
 
       return () => { unsubscribe() ; }
   },[])
 
+  /** inserir ativo sem deixar repetir o nome */
+  const handleInsert = (data) => { 
+    
+    ativoRef(props.match.params.carteira).get()
+      .then( (res) => {
+        
+        /** codigo para não permitir inserir dois ativos com o mesmo nome */
+        let foundedSomeone = false
+        
+        res.forEach(ativo => {
+          console.log( ativo.data().nome , data.nome )
 
-  const handleInsert = (data) => ativoRef(props.match.params.carteira).doc(data.nome).set( data )
-  .then( () => alert("ativo adicionado") )
+          if(ativo.data().nome == data.nome){
+            foundedSomeone = true
+           
+          }
+        });
 
+        if(foundedSomeone){
+          throw( "Erro não é possivel adicionar o ativo com o mesmo nome")
+        }
+        return 
+      })
+      .then( () => {
 
+          ativoRef(props.match.params.carteira).doc().set( data ) 
+          
+
+      })
+      .then( () => { alert("ativo adicionado") ; setFormOpen(false) })
+      .catch( ( e ) => alert( e ) )
+
+ 
+  }
+  
   const handleDelete = ( data ) =>  ativoRef(props.match.params.carteira).doc(data).delete().then( () => alert("ativo deletado"))
   return(<>
     <AtivoForm  

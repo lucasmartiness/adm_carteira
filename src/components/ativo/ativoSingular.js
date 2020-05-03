@@ -78,13 +78,16 @@ const AtivoSingular = (props ) => {
 
   const handleSave = ( operacao ) => {
 
-
-
-
     operacoesRef( carteira_param , ativo_param ).add( operacao ) 
       .then( () => {
         console.log( operacao )
       })
+  }
+  const handleDelete = ( id ) => {
+    operacoesRef( carteira_param , ativo_param )
+      .doc(id)
+      .delete()
+      .then( () => alert( "Operação deletada!"))
   }
 
   let [openDialog, setOpenDialog] = useState(false)
@@ -145,6 +148,12 @@ const AtivoSingular = (props ) => {
                 data {operacao.data} |
                 ação {operacao.tipoOperacao} |
               </CardContent>
+              <Button
+                onClick={ () => handleDelete( operacao.id )}
+                variant="contained"
+                color="secondary"> 
+                Deletar
+              </Button>
             </Box> ) 
           )  }
 

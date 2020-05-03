@@ -9,6 +9,7 @@ const FormCarteira = (props) => {
 
   let [nome,setNome] = useState(props.nome || null )
   let [ehAtivoVariavel,setAtivoVariavel] = useState( props.ehAtivoVariavel || 'false')
+  let [rotulo,setRotulo] = useState( props.rotulo || 'acao')
 
 
 
@@ -16,7 +17,7 @@ const FormCarteira = (props) => {
 
 
 
-    props.onSave({nome,ehAtivoVariavel})
+    props.onSave({nome,ehAtivoVariavel,rotulo})
     setNome("")
     
   }
@@ -39,6 +40,20 @@ const FormCarteira = (props) => {
             >
                 <MenuItem value={'false'}>Renda Fixa</MenuItem>
                 <MenuItem value={'true'}>Renda Variavel</MenuItem>
+            </Select>
+        </Box>
+
+        <Box>
+          <Select
+              value={rotulo}
+              onChange={(e)=> setRotulo( e.target.value )}
+              placeholder="Seu Ativo"
+            >
+                <MenuItem value={'acao'}>Ação</MenuItem>
+                <MenuItem value={'fundo_imobiliario'}>Fundo Imobiliario</MenuItem>
+                <MenuItem value={'titulo'}>Titulo renda fixa</MenuItem>
+                <MenuItem value={'fundo_geral'}>Fundo</MenuItem>
+                <MenuItem value={'fundo_de_emergencia'}>Reserva de Emergencia</MenuItem>
             </Select>
         </Box>
 

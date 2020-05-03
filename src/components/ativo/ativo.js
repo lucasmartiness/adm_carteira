@@ -13,11 +13,13 @@ let styles = makeStyles((style)=>({
     margin:"10px"
   },
   card:{
-    width:"100%"
+    width:"100%",
+     
   },
   text:{
     fontSize: "14px",
-    fontWeight:"bold"
+    fontWeight:"bold",
+    textTransform:"capitalize"
   },
   button:{
     width:"100%"
