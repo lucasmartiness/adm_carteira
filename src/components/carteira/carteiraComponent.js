@@ -31,33 +31,65 @@ let styles = makeStyles((style)=>({
 export const Carteiras = ( props ) => {
 
   let classes = styles()
-  let [carteiras,setCarteiras] = useState([]) 
-
-  let [formOpen, setFormOpen] = useState(false)
-
-
-
-  const handleDelete = (id) => carteiraRef().doc(id).delete()
-  const handleInsert = (title) => carteiraRef().add({title}).then( () => setFormOpen( false ))
+  
 
   useEffect( () => {
-
+    
     let uns = carteiraRef()
-      .onSnapshot(( carteiras ) => {
-
-        const carteirasCarregadas = carteiras.docs.map( carteira => ( {id:carteira.id, ...carteira.data() } ) )
-        
-        setCarteiras (carteirasCarregadas)
-
-        console.log(carteirasCarregadas)
-      })
-
-      return () => uns()
+    .onSnapshot(( carteiras ) => {
+      
+      const carteirasCarregadas = carteiras.docs.map( carteira => ( {id:carteira.id, ...carteira.data() } ) )
+      
+      setCarteiras (carteirasCarregadas)
+      
+      console.log(carteirasCarregadas)
+    })
+    
+    return () => uns()
   },[  ])
 
+
+
+  let [carteiras,setCarteiras] = useState([]) 
+  let [formOpen, setFormOpen] = useState(false)
+  let [updateData , setUpdateData ] = useState({id:0, update:false , fields:{ nome : "" }})
+  
+  const handleDelete = (id) => carteiraRef().doc(id).delete()
+
+  const handleInsert = (title) => {
+
+    if(!updateData.update){
+
+      carteiraRef().add({title}).then( () => setFormOpen( false ))
+    }
+    else{
+      carteiraRef().doc( updateData.id ).set({title}).then( () => setFormOpen( false ))
+      setUpdateData({ id:0 , update:false, fields:{ nome:""} })
+    }
+    
+  }
+  
+  const handleUpdate = ( id ) => {
+    
+    
+    carteiraRef().doc( id ).get().then( ( data ) => {
+      
+      console.log( data.data().title )
+      setUpdateData({id, update:true, fields:{ nome : data.data().title} } )
+      setFormOpen(true)
+      
+     } )
+    
+    //
+  }
+
   return(<>
-    <FormCarteira onClose={() => setFormOpen( !formOpen) } open={formOpen} 
-                  onSave={ (nome) => handleInsert(nome) } />
+    <FormCarteira 
+        onClose={() => setFormOpen( !formOpen) }
+        open={formOpen} 
+        onSave={ (nome) => handleInsert(nome) } 
+        nome = { updateData.fields.nome }
+        />
     <Navbar />
     <Box bgColor="green" className={classes.topContainer}>
       <Container className={classes.container}>
@@ -76,7 +108,8 @@ export const Carteiras = ( props ) => {
                   ( <Carteira key={carteira.id} 
                               title={ carteira.title} 
                               id={carteira.id}
-                              delete={ () => handleDelete( carteira.id )}  />)    )}
+                              delete={ () => handleDelete( carteira.id )} 
+                              update={ () => handleUpdate( carteira.id )} />)    )}
               
               <AdicionarButton 
                   texto="Adicionar" 

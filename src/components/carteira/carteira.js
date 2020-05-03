@@ -4,7 +4,7 @@ import firebase from './../../firebase'
 import { useHistory } from "react-router-dom";
 
 
-import {AppBar,Toolbar, Typography , Container, makeStyles , Card , CardContent , Grid , Link , Button, Icon } from '@material-ui/core'
+import {AppBar,Toolbar, Typography , Container, makeStyles , Card , CardContent , CardActions, Grid , Link , Button, Icon } from '@material-ui/core'
  
 import {Link as Linker} from 'react-router-dom'
  
@@ -24,6 +24,9 @@ let styles = makeStyles((style)=>({
   },
   red:{
     color:'red'
+  },
+  blue:{
+    color:'blue'
   }
 }))
 
@@ -51,9 +54,14 @@ const Carteira = ( props ) => {
             </Typography>
             
           </CardContent>
-          <Button onClick={ props.delete } className={classes.red} >
+          <CardActions>
+            <Button onClick={ props.delete } className={classes.red} >
               Delete
             </Button>
+            <Button onClick={ props.update } className={classes.blue} >
+              Update
+            </Button>
+          </CardActions>
       </Card>
     </Button>
     
