@@ -1,6 +1,8 @@
 import React,{useState,useEffect} from 'react'
 
 import data from './../../data/data.js'
+import {Link} from 'react-router-dom'
+
 
 const OperacoesList = ({operacoes}) => {
 
@@ -36,7 +38,8 @@ const Operacoes = (props) => {
 
   console.log ( "Operacoes: ",operacoes )
   return (<>
-    operacao 
+    <div> Operacao  </div>
+    <Link to={"/carteiras/"}> Voltar </Link>
     <OperacoesList operacoes={operacoes}/>
   </>)
 }

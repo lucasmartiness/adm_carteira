@@ -2,6 +2,11 @@ import React from 'react';
 import {HashRouter as Router , Route,Switch } from 'react-router-dom'
 import {routesConfig} from './Routes.js'
 import store from './redux/root'
+import firebase from './firebase'
+import Navbar from './component/Navbar'
+// firebase.firestore().collection('carteira').add({title:"Carteira Mostrão"})
+
+import {Grid} from '@material-ui/core'
 
 const Routes = () =>
 {
@@ -21,11 +26,14 @@ function App(props)
 
   return (
     <div className="App">
-       <Router>
-        <Switch>
-          <Routes />
-        </Switch>
-      </Router>
+
+      <Grid container>
+        <Router>
+          <Switch>
+            <Routes />
+          </Switch>
+        </Router>
+      </Grid>
     </div>
   );
 }

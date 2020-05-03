@@ -7,11 +7,14 @@ const Ativos = ( {ativos} ) => {
   console.log(ativos)
   return(
     <>
-      Lista ativos <br/>
+      Lista de ativos <br/>
       {
         ativos && ativos.map( ativo => (
           <div key={ativo.nome }>
             ativo: {ativo.nome }
+            valor patrimonial: {ativo.valorPatrimonial() }
+            qtd: {ativo.qtd() } 
+
           </div>
         ))
       }
@@ -34,7 +37,9 @@ const Carteira = (props) => {
 
 
   return (<>
-    carteira :
+    <div> carteira : </div>
+
+
     <Ativos ativos={carteira.RendaTotal()} />
   </>)
 }

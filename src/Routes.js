@@ -1,18 +1,12 @@
 import {Home} from './component/home.js'
-import Carteira from './component/carteira/carteira'
-import Carteiras from './component/carteira/carteiras'
-import Operacoes from './component/operacao/operacoes'
-import Operacao from './component/operacao/operacao'
-
+import {Carteiras} from './components/carteira/carteiraComponent'
+import Ativo from './components/ativo/ativoComponent'
+import AtivoSingular from './components/ativo/ativoSingular'
+ 
 export const routesConfig = [
    { path:"/" , component:Home, exact:true} ,
-   { path:"/carteiras/:id" , component:Carteira, exact:true} ,
-   { path:"/carteiras" , component:Carteiras, exact:true} ,
-   { path:"/carteiras/:id/operacoes/:op" , component:Operacao , exact:true} ,
-   { path:"/carteiras/:id/operacoes/" , component:Operacoes, exact:true} ,
-  // { path:"/candidatos" , component: CandidatosComponent , exact:true} ,
-  // { path:"/candidatos/:id" , component: CandidatosComponent , exact:true} ,
-  // { path:"/ranking" , component: RankingComponent , exact:true} ,
-  // { path:"/login" , component: Login , exact:true},
-  // { path:"/signup" , component: Cadastro , exact:true},
+   { path:"/carteira" , component:Carteiras, exact:true} ,
+   { path:"/carteira/:carteira" , component:Ativo, exact:true} ,
+   { path:"/carteira/:carteira/ativo" , component:Ativo, exact:true} ,
+   { path:"/carteira/:carteira/ativo/:ativo" , component:AtivoSingular, exact:true} ,
 ]

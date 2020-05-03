@@ -8,7 +8,7 @@ class RendaFixa extends AtivoFinanceiro{
   jurosMedio = this.calcularMediaJuros()
 
   constructor(nome,cotacao,atrelacao){
-    super(nome,cotacao)
+    super(nome,cotacao,"Renda Fixa")
     this.atrelacao = atrelacao
   }
   calcularTempoPassadoEmAnos(){

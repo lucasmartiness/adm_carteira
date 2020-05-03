@@ -1,4 +1,4 @@
-const TipoOperacao = {
+  const TipoOperacao = {
   Comprar : "C",
   Vender:"V",
   Jsp: "J",

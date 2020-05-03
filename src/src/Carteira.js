@@ -123,6 +123,7 @@ class Carteira
         if( operacao.tipo == "V"){
 
           let encontrado = this.ObterAtivoPeloNome(operacao.nomeAtivo)
+          console.log( operacao.qtd )
           this.qtdAtivos-= operacao.qtd
 
           this.dinheiro += operacao.qtd * operacao.valor//+( operacao.valor * ( operacao.juros/100 || 1))
@@ -190,7 +191,7 @@ class Carteira
       novoAtivo.operacoes.push(operacao)
      // novoAtivo.prazo = operacao.prazo 
       // adicionar ativo na carteira
-      let ativoCriado = (rendaFixa) ? this.RendaFixa.push( novoAtivo ) : this.RendaVariavel.push( novoAtivo )
+      let ativoCriado = (rendaFixa ) ? this.RendaFixa.push( novoAtivo ) : this.RendaVariavel.push( novoAtivo )
       
       // registrar histórico de compras 
      // this.InserirHistorico(operacao)

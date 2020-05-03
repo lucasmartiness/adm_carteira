@@ -6,11 +6,11 @@ class AtivoFinanceiro {
   operacoes = []
   valorCotacao = 0
   patrimonio =   0
-
-  constructor(nome, valorCotacao = 0){
+  tipo = ""
+  constructor(nome, valorCotacao = 0,tipo){
     this.nome = nome
     this.valorCotacao = valorCotacao
-
+    this.tipo = tipo
     
   }
   pegarOperacoes = () => this.operacoes
