@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from 'react'
 import firebase from './../../firebase'
 
-import {AppBar,Toolbar,Typography , Container, makeStyles , Box , Grid , Paper} from '@material-ui/core'
+import {AppBar,Toolbar,Typography , Container, makeStyles , Card , Box , Grid , Paper} from '@material-ui/core'
 
 import Carteira from './carteira'
 import AdicionarButton from './adicionarButton'
@@ -46,7 +46,7 @@ export const Carteiras = ( props ) => {
     })
     
     return () => uns()
-  },[  ])
+  },[ props.match.url ])
 
 
 
@@ -95,10 +95,12 @@ export const Carteiras = ( props ) => {
       <Container className={classes.container}>
 
           
-          <Paper className={ classes.carteiraContainer} elevation={3}>
-
+          <Card className={ classes.carteiraContainer} variant="outlined">
+            <Typography>
+              Suas  
+            </Typography>
             <Typography variant="h4" component="h1">
-              Suas Carteiras
+              Carteiras
             </Typography>
 
             <Grid container  spacing={2}>
@@ -115,7 +117,7 @@ export const Carteiras = ( props ) => {
                   texto="Adicionar" 
                   open={ () => setFormOpen(true)}        />
             </Grid> 
-          </Paper>
+          </Card>
       </Container>
     </Box>
   </>)

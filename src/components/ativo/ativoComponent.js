@@ -4,7 +4,7 @@ import Navbar from './navbar'
 import firebase from './../../firebase'
 
 
-import {AppBar,Toolbar,Typography , Container, makeStyles , Breadcrumbs, Link , Box , Grid , Paper} from '@material-ui/core'
+import {AppBar,Toolbar,Typography , Card,CardContent, Container, makeStyles , Breadcrumbs, Link , Box , Grid , Paper} from '@material-ui/core'
 import AdicionarButton from '../carteira/adicionarButton'
 
 import {Link as RouterLink} from 'react-router-dom'
@@ -37,13 +37,12 @@ const AtivoComponent = ( props ) => {
   
   let classes = styles()
   let [ativos, setAtivos] = useState()
-
+  let [ carteira , setCarteira ] = useState()
   let [formOpen, setFormOpen] = useState(false)
 
-
-
+ 
   
-
+  // carregar os dados da carteira => ex : title
   useEffect( () => {
 
      
@@ -51,7 +50,6 @@ const AtivoComponent = ( props ) => {
       ativoRef( props.match.params.carteira )
         .onSnapshot( (ativos) => {
            
-          
           
           setAtivos( ativos.docs.map( ativo => {
             console.log( ativo )
@@ -61,7 +59,40 @@ const AtivoComponent = ( props ) => {
         })
         
       return () => { unsubscribe() ; }
-  },[])
+  },[props.match.url])
+
+  useEffect( () => {
+    /** carregar carteira carteira */
+    carteiraRef().doc( props.match.params.carteira).get()
+    .then( (d) => {
+      setCarteira(  d.data() )
+     
+    })
+    
+   console.log(props.match.url)
+  
+  } , [props.match.url])
+
+  useEffect( () => {
+
+      /** atualizar patrimonio no banco de dados */
+      ativoRef( props.match.params.carteira ).get().then( d => {
+
+        let patrimonio = 0
+        d.forEach( ativo => {
+          if ( typeof ativo.data().patrimonio === "number" )
+          {
+            patrimonio += ativo.data().patrimonio 
+
+            carteiraRef().doc( props.match.params.carteira).update({patrimonio})
+          }
+
+        })
+    } )
+
+
+  }, [carteira , props.match.url])
+
 
   /** inserir ativo sem deixar repetir o nome */
   const handleInsert = (data) => { 
@@ -88,7 +119,7 @@ const AtivoComponent = ( props ) => {
       })
       .then( () => {
 
-          ativoRef(props.match.params.carteira).doc().set( data ) 
+          ativoRef(props.match.params.carteira).doc().set( {...data,patrimonio:0} ) 
           
 
       })
@@ -99,6 +130,7 @@ const AtivoComponent = ( props ) => {
   }
   
   const handleDelete = ( data ) =>  ativoRef(props.match.params.carteira).doc(data).delete().then( () => alert("ativo deletado"))
+  
   return(<>
     <AtivoForm  
       onClose={()=>setFormOpen(false) } 
@@ -108,21 +140,32 @@ const AtivoComponent = ( props ) => {
 
     <Navbar />
     <Container className={classes.container}>
+      <Card component={Box} mt={2} variant="outlined">
+        <CardContent>
+          <Breadcrumbs>
+            <Link 
+                  component={RouterLink}
+                  to='/carteira'> Voltar 
+            </Link>
+          </Breadcrumbs>
 
-    <Breadcrumbs>
-          
-          <Link 
-                component={RouterLink}
-                to='/carteira'> Carteira 
-          </Link>
-        </Breadcrumbs>
+        </CardContent>
+      </Card>
+    
+    
 
-        <Paper className={ classes.carteiraContainer}>
-
+        <Card className={ classes.carteiraContainer} variant="outlined"> 
+          <Typography >
+            Carteira <Typography variant="inline" color="primary"> <strong> {carteira && carteira.title} </strong> </Typography> 
+          </Typography>
+          <Typography>
+            patrimonio {carteira && carteira.patrimonio}
+          </Typography>
+        </Card>
+        <Card className={ classes.carteiraContainer} variant="outlined" > 
           <Typography variant="h4" component="h1">
             Seus Ativos
           </Typography>
-
           <Grid 
             container  >
           
@@ -140,7 +183,7 @@ const AtivoComponent = ( props ) => {
 
             <AdicionarButton texto="adicionar" open={()=>setFormOpen(true)}    />
           </Grid> 
-        </Paper>
+        </Card>
     </Container>
   </>)
 }
