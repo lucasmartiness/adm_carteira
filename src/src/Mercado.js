@@ -93,7 +93,7 @@ const ObterIPCA = async ( ipca_metodo ) => {
     }) 
     
 }
-module.exports = {
+export {
   ObterCDI,
   ObterSELIC,
   ObterIBOV,

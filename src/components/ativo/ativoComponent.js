@@ -48,7 +48,8 @@ const AtivoComponent = ( props ) => {
      
     let unsubscribe = 
       ativoRef( props.match.params.carteira )
-        .onSnapshot( (ativos) => {
+        .get()
+        .then( (ativos) => {
            
           
           setAtivos( ativos.docs.map( ativo => {
@@ -58,8 +59,8 @@ const AtivoComponent = ( props ) => {
 
         })
         
-      return () => { unsubscribe() ; }
-  },[props.match.url])
+      // return () => { unsubscribe ; }
+  } , [props.match.url] )
 
   useEffect( () => {
     /** carregar carteira carteira */

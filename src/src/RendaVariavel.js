@@ -1,6 +1,6 @@
 
-const Operacao = require("./Operacao")
-const AtivoFinanceiro = require("./AtivoFinanceiro")
+import Operacao from "./Operacao"
+import AtivoFinanceiro from "./AtivoFinanceiro"
 class RendaVariavel extends AtivoFinanceiro {
  
   constructor(nome,cotacao){
@@ -8,4 +8,4 @@ class RendaVariavel extends AtivoFinanceiro {
   }
 }
 
-module.exports = RendaVariavel
+export default RendaVariavel

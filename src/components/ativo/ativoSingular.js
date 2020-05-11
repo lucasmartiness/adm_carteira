@@ -90,7 +90,7 @@ function AtivoSingular (props ) {
 
   let [ativo, setAtivo] = useState( { })
   let [operacoes, setOperacoes] = useState([])
-
+  let [count, setCount ] = useState(1)
   let [ carteiraDoc , setCarteiraDoc ] = useState({title:""})
   let [carteiraAdm, setCarteira] = useState( new CarteiraAdmin( carteira_param ) )
 
@@ -110,19 +110,20 @@ function AtivoSingular (props ) {
           alert("not exists")
         }
         setAtivo( {...ativo.data(), id: ativo.id } )
-        setCarteira( ativo.id , ativo.data().nome )
+    //    setCarteira( ativo.id , ativo.data().nome )
       })
 
         return () =>  unsubscribe  
         
-  } , [props.match.url , openDialog ] )
+  } , [props.match.url , openDialog , carteiraAdm ] )
 
   /** carregar dados da carteira */
   useEffect ( ( ) => {
-    carteiraRef().doc(carteira_param).get().then( ( data ) => {
+    let ref = carteiraRef().doc(carteira_param).get().then( ( data ) => {
       
       setCarteiraDoc( data.data() )
     })
+    return () => ref 
   },[props.match.url , openDialog])
 
 
@@ -133,52 +134,62 @@ function AtivoSingular (props ) {
       operacoesRef( carteira_param , ativo_param )
         .get()
         .then( operacoes => {
+
+          console.log( "update inside ")
+          //let _carteira =  carteiraAdm
+           let _carteira =  new CarteiraAdmin( carteira_param)
+
           let operacoesTotal = operacoes.docs.map( operacao => {
             
               /** para cada operação atualize a carteira */
-              let _carteira =  carteiraAdm
               
               let _ehAtivoFixo = operacao.data().ehAtivoVariavel == "true" ? false : true ;
 
-              console.log("Operação ",operacao)
               
               const OperacaoNova = new Operacao( operacao.data().nome , parseFloat( operacao.data().valor ), parseFloat(  operacao.data().data ), operacao.data().tipoOperacao, parseInt( operacao.data().qtd ) )
               
+              console.log( "_Carteira" , _carteira )
               _carteira.adicionarAtivo ( OperacaoNova , _ehAtivoFixo , operacao.data().valor  )
 
-              setCarteira(_carteira)
                           
               return { id:operacao.id , ...operacao.data() , detalhes: OperacaoNova   }
 
            })
 
-          setOperacoes(operacoesTotal)
 
-           return 
+           console.log("Operação ", operacoesTotal )
 
-        }).then( () => {
+            let patrimonio = 0
+    
+            patrimonio = _carteira.valorPatrimonial(   ) 
+
+            patrimonio = typeof patrimonio === "NaN" ? 0 : patrimonio
+             
+             ativoRef( carteira_param  )
+              .doc(ativo_param)
+              .update( { patrimonio: patrimonio })
+              .then( ( ) => { 
+                console.log( "updated" ) ;
+                //  setCount( count + 1 )
+                })
+             // setAtivo( {...ativo,  patrimonio } )
+             
+             setOperacoes(operacoesTotal)
+             setCarteira(_carteira)
+
+              console.log("CARTEIRA",_carteira)
           
-          let patrimonio = carteiraAdm.valorPatrimonial(   ) 
-          
-          patrimonio = typeof patrimonio == "NaN" ? 0 : patrimonio
-          ativoRef( carteira_param  ).doc(ativo_param).update( { patrimonio }).then( ( ) => console.log( "updated" ))
-          // setAtivo( {...ativo,  patrimonio } )
 
-          
-         // new Operacao( "SMLS3" , 10.45,new Date(2020,11,10 ), TipoOperacao.Comprar , 6 )
-          console.log("CARTEIRA",carteiraAdm)
+             
 
-           return
-        } )
-        .then( () => {
-          console.log("(_ATIVO", ativo)
         })
-        .catch( err => alert(err) )/** fim on snapshot */
+        /** fim on snapshot */
+       // .catch( err => alert(err) )/** fim on snapshot */
         
         
         
     return () => unsubscribe
-  } , [props.match.url , openDialog ])
+  } , [props.match.url  , count ,  openDialog , carteiraAdm.valorPatrimonial(   )   ])
 
 
 
@@ -188,11 +199,10 @@ function AtivoSingular (props ) {
       .then( () => {
         console.log( operacao )
         setOpenDialog(false)
+       setCount( count + 1 )      
         
       })
 
-
-      
   }
 
 
@@ -202,8 +212,10 @@ function AtivoSingular (props ) {
       .delete()
       .then( () => {
         
-        alert( "Operação deletada!")
-        
+        setOpenDialog(false)
+
+       // alert( "Operação deletada!")
+        setCount( count + 1)
       })
   }
 
@@ -249,6 +261,10 @@ function AtivoSingular (props ) {
           <Typography>
               Patrimonio R$<strong> { ativo.patrimonio } </strong>
           </Typography>
+          <Typography>
+              Quantidade:  <strong> { carteiraAdm && carteiraAdm.qtdAtivos} </strong>
+          </Typography>
+          
           <Typography style={{color:"#3F51B5"}}>
             {ativo.rotulo }
           </Typography>

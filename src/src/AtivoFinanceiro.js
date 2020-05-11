@@ -114,7 +114,7 @@ class AtivoFinanceiro {
   }
 }
 
-module.exports = AtivoFinanceiro
+export default AtivoFinanceiro
 
 
 

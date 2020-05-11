@@ -48,8 +48,7 @@ class Operacao{
 }
 
 
-
-module.exports = {
+export  {
   Operacao,
   TipoOperacao
 }
