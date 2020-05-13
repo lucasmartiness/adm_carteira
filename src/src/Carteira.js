@@ -78,10 +78,10 @@ class Carteira
           this.dinheiro += operacao.qtd * operacao.valor//+( operacao.valor * ( operacao.juros/100 || 1))
           
           //operacao.valor = encontrado.calcularMediaVenda() - encontrado.calcularMediaCompra() 
-          console.log( "ativo ","qtd ",operacao.qtd,
-                        "juros", operacao.juros,
-                        "valor",operacao.valor ,
-                        "lucro", operacao.valor / encontrado.calcularMediaCompra() *100 -100 )
+          // console.log( "ativo ","qtd ",operacao.qtd,
+          //               "juros", operacao.juros,
+          //               "valor",operacao.valor ,
+          //               "lucro", operacao.valor / encontrado.calcularMediaCompra() *100 -100 )
 
 
           if( encontrado && operacao.qtd > encontrado.qtdAtivosEmPosse()  ){

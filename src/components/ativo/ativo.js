@@ -46,15 +46,16 @@ const Ativo = ( props ) => {
     history.push( props.base   )
   }  
 
-  console.log( mapTipoAtivo[props.rotulo] , props.rotulo )
+  //console.log( mapTipoAtivo[props.rotulo] , props.rotulo )
+  
   return(
     <Grid xs={12} sm={5} md={5} lg={2} className={classes.container} >
 
     <Button className={classes.button}  >
       <Card  className={classes.card} variant="outlined">
-       
           <CardContent onClick={ handleClick }>
-            <Typography variant="subtitle2" align="left">
+
+            <Typography variant="subtitle2" align="left" style={{fontSize:"12px"}}>
               { mapTipoAtivo[ props.rotulo ] || "Ativo"}
             </Typography> 
             <Typography className={classes.text} variant="body1" color="primary" align="left">
@@ -64,20 +65,18 @@ const Ativo = ( props ) => {
               {/* Patr    { Number.Format( Number.parseFloat( props.patrimonio ) )} */}
               Patrimonio { new Intl.NumberFormat('pt-BR' , { style: 'currency', currency: 'BRL' }).format( props.patrimonio.toFixed(2) ) }
             </Typography>
+
           </CardContent>
           <CardActions className={classes.cardAction}>
-
             <Button 
                 variant="contained"
                 color="secondary"
                 onClick={props.onDelete}>
               Deletar
             </Button>
-
           </CardActions>
       </Card>
     </Button>
-    
   </Grid>)
 }
 

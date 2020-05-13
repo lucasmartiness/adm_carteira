@@ -407,10 +407,10 @@ function AtivoDataHeader(
               Quantidade:  <strong> { carteiraAdm && carteiraAdm.qtdOperacoes} </strong>
           </Typography>
           <Typography >
-            Lucro Valor Provisorio:   {    ativo.lucroRealizado && new Intl.NumberFormat('pt-BR',{ style: 'currency', currency: 'BRL' }).format( ativo.lucroRealizado  )  }
+            Lucro Valor Provisorio:  {   ativo.lucroRealizado && new Intl.NumberFormat('pt-BR',{ style: 'currency', currency: 'BRL' }).format( ativo.lucroRealizado  )  }
           </Typography>
           <Typography >
-            Lucro % Provisorio { ativo.lucroRealizadoRelativo && ativo.lucroRealizadoRelativo}
+            Lucro Provisorio: { ativo.lucroRealizadoRelativo && Math.floor( ativo.lucroRealizadoRelativo )} %
           </Typography>
 
           { ativo && ativo.cotacao && (
@@ -428,7 +428,9 @@ function AtivoDataHeader(
           </Typography> */}
 
           <Typography >
+            <strong>
             {ativo.ehAtivoVariavel == 'true' ? 'renda variavel' : 'renda fixa' }
+            </strong>
           </Typography>
 
           <Button 
@@ -487,10 +489,10 @@ function ShowOperacoes( {operacoes , handleDelete , handleAtualizar} ) {
             <TableCell> Patrimonio </TableCell>
             <TableCell> Quantidade </TableCell>
             <TableCell> Custo Unid. </TableCell>
-            <TableCell> Prazo </TableCell>
             <TableCell> Data </TableCell>
             <TableCell> Atitude </TableCell>
             <TableCell> Juros </TableCell>
+            <TableCell> Prazo </TableCell>
             <TableCell> Ação </TableCell>
           </TableRow>
         </TableHead>
@@ -499,13 +501,13 @@ function ShowOperacoes( {operacoes , handleDelete , handleAtualizar} ) {
         {operacoes && operacoes.map( operacao => (
               <TableRow key={operacao.id}>
                 {/* <TableCell> {operacao.id}   </TableCell> */}
-                <TableCell> {operacao.qtd * operacao.valor}   </TableCell>
+                <TableCell> { new Intl.NumberFormat('pt-BR',{ style: 'currency', currency: 'BRL' }).format( parseFloat( operacao.qtd * operacao.valor ).toFixed(2) )  }   </TableCell>
                 <TableCell> {operacao.qtd}    </TableCell>
-                <TableCell> {operacao.valor}  </TableCell>
-                <TableCell> {operacao.prazo || "-"}  </TableCell>
+                <TableCell>  { new Intl.NumberFormat('pt-BR',{ style: 'currency', currency: 'BRL' }).format( parseFloat(operacao.valor).toFixed(2) )  }  </TableCell>
                 <TableCell> {operacao.data} </TableCell>
                 <TableCell> {operacao.tipoOperacao}  </TableCell>
                 <TableCell> {operacao.juros || "-" } </TableCell>
+                <TableCell> {operacao.prazo || "-"}  </TableCell>
   
                 <TableCell>
                   <Button
@@ -513,8 +515,8 @@ function ShowOperacoes( {operacoes , handleDelete , handleAtualizar} ) {
                     variant="contained"
                     color="secondary"> 
                     <Icon>delete</Icon>
-
                   </Button>
+                  
                   <Button
                     onClick={ () => handleAtualizar( operacao.id )}
                     variant="contained"
@@ -522,7 +524,6 @@ function ShowOperacoes( {operacoes , handleDelete , handleAtualizar} ) {
                     mx={2}
                     color="primary"> 
                     <Icon>edit</Icon>
-
                   </Button>
                 </TableCell>
               </TableRow> ) 
