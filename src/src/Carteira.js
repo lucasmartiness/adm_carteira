@@ -21,18 +21,127 @@ class Carteira
   RendaTotal = () => [...this.RendaVariavel , ...this.RendaFixa]
   TodosAtivos = () => this.RendaTotal()
   dinheiro = 0
-  patrimonio = 0
+  patrimonio = this.valorPatrimonial()
   nome = ""
   proporcoes = []
   listaOperacoes = []
   listaValorPatrimonialHistorico = []
-  qtdAtivos = 0
+  qtdOperacoes  = 0
   constructor( id , nome )
   {
     this.id = id
     this.nome = nome
 
   }
+
+   /**
+   * adicionar um ativo de renda fixa e evita que dois ativos com o mesmo nome exemplo ITSA3 sejam adicionados
+   * e adiciona uma operação
+   */
+  adicionarAtivo(  operacao , rendaFixa = true , cotacao = 0 , atrelacao = "SELIC")
+  {
+    /** */
+    
+    this.listaValorPatrimonialHistorico.push( 
+      {
+      vp : this.valorPatrimonial(),
+      lucro: this.lucroCarteiraRealizadoRelativo() ,
+      lucroProvisorio: this.lucroProvisorioTotalRelativo() 
+    })
+  
+    this.listaOperacoes.sort( ( a , p ) => {
+    
+      return new Date( a.operacao.data )  - new Date(p.operacao.data)  
+    } ) 
+    
+   
+    this.listaOperacoes.push( { operacao  } )
+
+    if( operacao.tipo == "C"){
+      
+      this.qtdOperacoes  += operacao.qtd
+
+    }
+
+    let ativoEncontrado = this.TodosAtivos().find( ( ativo ) => ativo.nome == operacao.nomeAtivo  )
+
+    if( ativoEncontrado != null  )// foi encontrado um ativo então atualize ele adicionando uma operação
+    {
+
+        /** validar a quantidade de venda dos ativos */
+        if( operacao.tipo == "V"){
+
+          let encontrado = this.ObterAtivoPeloNome(operacao.nomeAtivo)
+
+          this.qtdOperacoes  -= operacao.qtd
+          
+          this.dinheiro += operacao.qtd * operacao.valor//+( operacao.valor * ( operacao.juros/100 || 1))
+          
+          //operacao.valor = encontrado.calcularMediaVenda() - encontrado.calcularMediaCompra() 
+          console.log( "ativo ","qtd ",operacao.qtd,
+                        "juros", operacao.juros,
+                        "valor",operacao.valor ,
+                        "lucro", operacao.valor / encontrado.calcularMediaCompra() *100 -100 )
+
+
+          if( encontrado && operacao.qtd > encontrado.qtdAtivosEmPosse()  ){
+            
+            throw ("erro não é possivel remover mais ativos nessa operação, talves voce não tenha tantos ativosp para remover, tente remover menos")
+            return 
+          }
+        } /** ./ validado venda dos ativos */
+
+        /** validar a quantidade de venda dos ativos */
+        else if( operacao.tipo == "R"){
+
+          let encontrado = this.ObterAtivoPeloNome(operacao.nomeAtivo)
+          this.qtdOperacoes -= operacao.qtd 
+          
+
+          this.dinheiro += encontrado.valorMedioCompraComJuros() * operacao.qtd
+          
+          console.log( "ativo ","qtd ",operacao.qtd,
+                        "juros",  encontrado.calcularMediaJuros (),
+                        "valor venda",operacao.valor  )
+
+
+          if( encontrado && operacao.qtd > encontrado.qtdAtivosEmPosse()  ){
+            
+            throw ("erro não é possivel remover mais ativos nessa operação, talves voce não tenha tantos ativosp para remover, tente remover menos")
+            return 
+          }
+        } /** ./ validado venda dos ativos */
+
+        //foreach nos ativos [ renda fixa ou variavel ]
+        const AlgoritmoAdcionador = ativo => 
+        {
+          if(ativo.nome == operacao.nomeAtivo )
+          {          
+            
+            // INSERIR ATIVO           
+            ativo.operacoes.push( operacao )
+            
+            // atualizar cotacao caso usuario passe como parametro
+            if( cotacao != 0 ) ativo.valorCotacao = cotacao || ativo.valorCotacao || 0
+          }
+
+        }
+
+      let ativoAtualizado = (rendaFixa) ? this.RendaFixa.forEach( AlgoritmoAdcionador )  : this.RendaVariavel.forEach( AlgoritmoAdcionador )
+
+    }
+    else /** ativo não encontrado, então adicione um ativo e depois adicione a sua primeira operacao */
+    {
+      /** é renda fixa ou variavel */
+      let novoAtivo = (rendaFixa) ?  new RendaFixa( operacao.nomeAtivo,cotacao,atrelacao ) : new RendaVariavel( operacao.nomeAtivo,cotacao )
+      
+      // adicionar operacao no novo ativo
+      novoAtivo.operacoes.push(operacao)
+      // adicionar ativo na carteira
+      let ativoCriado = (rendaFixa ) ? this.RendaFixa.push( novoAtivo ) : this.RendaVariavel.push( novoAtivo )
+    }
+  }
+
   valorPatrimonialTotal(){
   
 
@@ -86,119 +195,13 @@ class Carteira
     },0)
   }
 
-  // valorPatrimonialCotacao( valorCotacao ){
-  //   return this.qtdAtivosEmPosse() * ( valorCotacao || this.valorCotacao ) 
-  // }
+  
   caixaRelativo(){
     return this.dinheiro / this.valorPatrimonial() * 100
   }
 
-  /**
-   * adicionar um ativo de renda fixa e evita que dois ativos com o mesmo nome exemplo ITSA3 sejam adicionados
-   * e adiciona uma operação
-   */
 
   
-  adicionarAtivo(  operacao , rendaFixa = true , cotacao = 0 , atrelacao = "SELIC")
-  {
-    /** */
-    
-    this.listaValorPatrimonialHistorico.push( {vp : this.valorPatrimonial(),lucro: this.lucroCarteiraRealizadoRelativo() , lucroProvisorio: this.lucroProvisorioTotalRelativo() })
-  
-    this.listaOperacoes.sort( ( a , p ) => {
-    
-      return new Date( a.operacao.data )  - new Date(p.operacao.data)  
-    } ) 
-    
-   
-    this.listaOperacoes.push( { operacao  })
-    
-    this.qtdAtivos += operacao.qtd
-    let ativoEncontrado = this.TodosAtivos().find( ( ativo )=> ativo.nome == operacao.nomeAtivo  )
-
-    if( ativoEncontrado != null  )// foi encontrado um ativo então atualize ele adicionando uma operação
-    {
-
-        /** validar a quantidade de venda dos ativos */
-        if( operacao.tipo == "V"){
-
-          let encontrado = this.ObterAtivoPeloNome(operacao.nomeAtivo)
-          console.log( operacao.qtd )
-          this.qtdAtivos-= operacao.qtd
-
-          this.dinheiro += operacao.qtd * operacao.valor//+( operacao.valor * ( operacao.juros/100 || 1))
-          
-          //operacao.valor = encontrado.calcularMediaVenda() - encontrado.calcularMediaCompra() 
-          
-          console.log( "ativo ","qtd ",operacao.qtd,
-                        "juros", operacao.juros,
-                        "valor",operacao.valor ,
-                        "lucro", operacao.valor / encontrado.calcularMediaCompra() *100 -100 )
-
-
-          if( encontrado && operacao.qtd > encontrado.qtdAtivosEmPosse()  ){
-            
-            throw ("erro não é possivel remover mais ativos nessa operação, talves voce não tenha tantos ativosp para remover, tente remover menos")
-            return 
-          }
-        } /** ./ validado venda dos ativos */
-
-        /** validar a quantidade de venda dos ativos */
-        else if( operacao.tipo == "R"){
-
-          let encontrado = this.ObterAtivoPeloNome(operacao.nomeAtivo)
-          this.qtdAtivos-= operacao.qtd 
-          
-
-          this.dinheiro += encontrado.valorMedioCompraComJuros() * operacao.qtd
-          
-          console.log( "ativo ","qtd ",operacao.qtd,
-                        "juros",  encontrado.calcularMediaJuros (),
-                        "valor venda",operacao.valor  )
-
-
-          if( encontrado && operacao.qtd > encontrado.qtdAtivosEmPosse()  ){
-            
-            throw ("erro não é possivel remover mais ativos nessa operação, talves voce não tenha tantos ativosp para remover, tente remover menos")
-            return 
-          }
-        } /** ./ validado venda dos ativos */
-
-        //foreach nos ativos [ renda fixa ou variavel ]
-        const AlgoritmoAdcionador = ativo => 
-        {
-          if(ativo.nome == operacao.nomeAtivo )
-          {          
-            
-            // INSERIR ATIVO           
-            ativo.operacoes.push( operacao )
-            
-            // atualizar cotacao caso usuario passe como parametro
-            if( cotacao != 0 ) ativo.valorCotacao = cotacao || ativo.valorCotacao || 0
-          }
-
-        }
-
-      let ativoAtualizado = (rendaFixa) ? this.RendaFixa.forEach( AlgoritmoAdcionador )  : this.RendaVariavel.forEach( AlgoritmoAdcionador )
-
-    }
-    else /** ativo não encontrado, então adicione um ativo e depois adicione a sua primeira operacao */
-    {
-      /** é renda fixa ou variavel */
-      let novoAtivo = (rendaFixa) ?  new RendaFixa( operacao.nomeAtivo,cotacao,atrelacao ) : new RendaVariavel( operacao.nomeAtivo,cotacao )
-      
-      // adicionar operacao no novo ativo
-      novoAtivo.operacoes.push(operacao)
-     // novoAtivo.prazo = operacao.prazo 
-      // adicionar ativo na carteira
-      let ativoCriado = (rendaFixa ) ? this.RendaFixa.push( novoAtivo ) : this.RendaVariavel.push( novoAtivo )
-      
-      // registrar histórico de compras 
-     // this.InserirHistorico(operacao)
-    }
-  }
-
-
   historico()
   {
     let historico = []
@@ -383,8 +386,29 @@ class Carteira
           nome:ativo.nome, 
           proporcao, 
           rentabilidadeProvisoria: ativo.lucroTotalRelativo(),
-          rentabilidade: ativo.lucroRealizadoRelativo() }
-        )
+          rentabilidade: ativo.lucroRealizadoRelativo() ,
+          
+        })
+
+    } )
+
+    this.proporcoes = proporcaoGeral
+    return proporcaoGeral
+
+  }
+  gerarDadosRendaVariavelPatrimonio( ){
+    
+    // nome ativo , proporção ativo ex: papel[nome].proporcao ou papel.nome,papel.proporcao
+    let proporcaoGeral = []
+
+    let ativos = [...this.RendaVariavel , ...this.RendaFixa]
+    ativos.forEach( ( ativo )=>{
+
+     let proporcao = ativo.valorPatrimonial() / this.valorPatrimonialTotal() * 100
+      proporcaoGeral.push(
+        {
+          patrimonio: ativo.valorPatrimonial() 
+        })
 
     } )
 

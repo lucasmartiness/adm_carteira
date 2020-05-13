@@ -2,9 +2,16 @@ import React from 'react'
 import firebase from './../../firebase'
 
 import { useHistory } from "react-router-dom";
-
-
-import {AppBar,Toolbar, Typography , Container, makeStyles , Card , CardContent , CardActions, Grid , Link , Button, Icon } from '@material-ui/core'
+import {
+  AppBar,  Toolbar,
+  Typography ,
+  Icon, IconButton,
+  Container,  Grid , 
+  makeStyles ,
+  Card ,   CardContent ,  CardActions, 
+  Link , 
+  Button 
+} from '@material-ui/core'
  
 import {Link as Linker} from 'react-router-dom'
  
@@ -13,7 +20,8 @@ let styles = makeStyles((style)=>({
     margin:"10px"
   },
   card:{
-    width:"100%"
+    width:"100%",
+    minHeight:"100px"
   },
   text:{
     fontSize: "14px",
@@ -27,6 +35,13 @@ let styles = makeStyles((style)=>({
   },
   blue:{
     color:'blue'
+  },
+  cardFooter:{
+    position:"absolute",
+    bottom: "0px"
+  },
+  cardFooterButtonContainer:{
+    marginRight:"40px"
   }
 }))
 
@@ -40,27 +55,31 @@ const Carteira = ( props ) => {
     }  
 
   return(
-    <Grid xs={12} sm={5} md={5} lg={2} className={classes.container} >
+    <Grid item xs={12} sm={5} md={5} lg={2} className={classes.container} >
 
     <Button className={classes.button} >
-      <Card  className={classes.card}>
+      <Card  className={classes.card} variant="outlined">
        
           <CardContent  onClick={ handleClick }>
-            <Typography variant="body2" >
-              Carteira
-            </Typography> 
-            <Typography className={classes.text} variant="h2" color="primary" align="center">
+            <Typography className={classes.text} variant="h2"  align="left">
+              {/* <Icon>star </Icon> */}
               {props.title}
             </Typography>
             
           </CardContent>
-          <CardActions>
-            <Button onClick={ props.delete } className={classes.red} >
-              Delete
-            </Button>
-            <Button onClick={ props.update } className={classes.blue} >
-              Update
-            </Button>
+          <CardActions className={classes.cardFooter}>
+            
+              <IconButton onClick={ props.delete } color="secondary"  >
+                <Icon>
+                  delete
+                </Icon>
+              </IconButton>
+              <IconButton onClick={ props.update }  >
+                <Icon>
+                  edit
+                </Icon>
+              </IconButton>
+            
           </CardActions>
       </Card>
     </Button>

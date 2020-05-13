@@ -29,7 +29,7 @@ class RendaFixa extends AtivoFinanceiro{
       return acumulador +  resultado
     } , 0) 
 
-    return jurosTotal / qtdCompras
+    return jurosTotal / ( qtdCompras  || 1 ) 
   }
   valorMedioCompraComJuros(){
     return this.calcularMediaCompra() +  this.calcularMediaJuros() 

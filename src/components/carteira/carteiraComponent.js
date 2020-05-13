@@ -49,7 +49,6 @@ export const Carteiras = ( props ) => {
   },[ props.match.url ])
 
 
-
   let [carteiras,setCarteiras] = useState([]) 
   let [formOpen, setFormOpen] = useState(false)
   let [updateData , setUpdateData ] = useState({id:0, update:false , fields:{ nome : "" }})

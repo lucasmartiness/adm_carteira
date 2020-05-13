@@ -10,16 +10,18 @@ import {Link as Linker} from 'react-router-dom'
 
 let styles = makeStyles((style)=>({
   container:{
-    margin:"10px"
+    marginTop:"18px"
   },
   card:{
-    width:"100%"
+    width:"100%",
+    minHeight:"100px"
+
   },
   text:{
     fontSize: "25px"
   },
   button:{
-    width:"100%"
+    width:"100%",
   }
 }))
 
@@ -36,9 +38,9 @@ const Adicionar = ( props ) => {
   return(
   <Grid xs={12} sm={5} md={5} lg={2} className={classes.container} >
     <Button className={classes.button}  onClick={ handleClick }>
-      <Card  className={classes.card}>
+      <Card  className={classes.card} variant="outlined">
        
-          <CardContent>
+          <CardContent >
             <Typography variant="body2" >
               {props.texto}
             </Typography> 
