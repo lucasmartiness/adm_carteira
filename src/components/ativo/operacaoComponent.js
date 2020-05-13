@@ -404,6 +404,13 @@ function AtivoDataHeader(
           </Typography>
 
           <Typography>
+              Patrimonio e Lucro
+              <strong> 
+                { ativo.patrimonio && new Intl.NumberFormat('pt-BR',{ style: 'currency', currency: 'BRL' }).format( parseFloat( ativo.patrimonio + ativo.lucroRealizado) .toFixed(2) ) }
+              </strong>
+          </Typography>
+
+          <Typography>
               Quantidade:  <strong> { carteiraAdm && carteiraAdm.qtdOperacoes} </strong>
           </Typography>
           <Typography >
